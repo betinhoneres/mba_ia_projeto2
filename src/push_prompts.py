@@ -1,56 +1,47 @@
-"""
-Script para fazer push de prompts otimizados ao LangSmith Prompt Hub.
-
-Este script:
-1. Lê os prompts otimizados de prompts/bug_to_user_story_v2.yml
-2. Valida os prompts
-3. Faz push PÚBLICO para o LangSmith Hub
-4. Adiciona metadados (tags, descrição, técnicas utilizadas)
-
-SIMPLIFICADO: Código mais limpo e direto ao ponto.
-"""
-
 import os
 import sys
 from dotenv import load_dotenv
 from langchain import hub
 from langchain_core.prompts import ChatPromptTemplate
-from utils import load_yaml, check_env_vars, print_section_header
+import yaml
 
 load_dotenv()
 
-
-def push_prompt_to_langsmith(prompt_name: str, prompt_data: dict) -> bool:
-    """
-    Faz push do prompt otimizado para o LangSmith Hub (PÚBLICO).
-
-    Args:
-        prompt_name: Nome do prompt
-        prompt_data: Dados do prompt
-
-    Returns:
-        True se sucesso, False caso contrário
-    """
-    ...
-
-
-def validate_prompt(prompt_data: dict) -> tuple[bool, list]:
-    """
-    Valida estrutura básica de um prompt (versão simplificada).
-
-    Args:
-        prompt_data: Dados do prompt
-
-    Returns:
-        (is_valid, errors) - Tupla com status e lista de erros
-    """
-    ...
-
-
 def main():
-    """Função principal"""
-    ...
+    print("🚀 Iniciando push do prompt...")
 
+    file_path = "prompts/bug_to_user_story_v2.yml"
+
+    # Verifica se o arquivo existe
+    if not os.path.exists(file_path):
+        print("❌ Arquivo de prompt não encontrado.")
+        return 1
+
+    try:
+        # Carrega o YAML
+        with open(file_path, "r", encoding="utf-8") as f:
+            prompt_data = yaml.safe_load(f)
+
+        # Validação básica
+        if "system" not in prompt_data or "user" not in prompt_data:
+            print("❌ O YAML precisa conter 'system' e 'user'")
+            return 1
+
+        # Criar o prompt no formato esperado pelo LangSmith
+        prompt = ChatPromptTemplate.from_messages([
+            ("system", prompt_data["system"]),
+            ("human", prompt_data["user"])
+        ])
+
+        # Push (sem username!)
+        hub.push("bug_to_user_story_v2", prompt)
+
+        print("✅ Prompt enviado com sucesso: bug_to_user_story_v2")
+        return 0
+
+    except Exception as e:
+        print(f"❌ Erro ao enviar prompt: {e}")
+        return 1
 
 if __name__ == "__main__":
     sys.exit(main())

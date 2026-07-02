@@ -320,9 +320,11 @@ def main():
         print("   Configure seu username do LangSmith Hub antes de continuar.")
         return 1
 
+
     prompts_to_evaluate = [
-        f"{username}/bug_to_user_story_v2",
+        "bug_to_user_story_v2",
     ]
+
 
     all_passed = True
     evaluated_count = 0
