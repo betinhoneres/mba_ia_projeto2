@@ -1,47 +1,57 @@
 import os
 import sys
+from pathlib import Path
 from dotenv import load_dotenv
 from langchain import hub
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.load import load
 import yaml
+from utils import check_env_vars, print_section_header
 
 load_dotenv()
 
-def main():
-    print("🚀 Iniciando push do prompt...")
-
-    file_path = "prompts/bug_to_user_story_v2.yml"
-
-    # Verifica se o arquivo existe
-    if not os.path.exists(file_path):
-        print("❌ Arquivo de prompt não encontrado.")
-        return 1
+def push_prompts_to_langsmith():
+    """Lê o prompt otimizado e faz push para o LangSmith Prompt Hub."""
+    print_section_header("Iniciando Push do Prompt Otimizado")
+    
+    file_path = Path("prompts/bug_to_user_story_v2.yml")
+    
+    if not file_path.exists():
+        print(f"❌ Arquivo de prompt não encontrado em: {file_path}")
+        return False
 
     try:
-        # Carrega o YAML
+        print(f"Carregando e desserializando o prompt de {file_path}...")
+        
+        # Usamos unsafe_load para permitir que o PyYAML processe os objetos Python/LangChain contidos no arquivo v2
         with open(file_path, "r", encoding="utf-8") as f:
-            prompt_data = yaml.safe_load(f)
-
-        # Validação básica
-        if "system" not in prompt_data or "user" not in prompt_data:
-            print("❌ O YAML precisa conter 'system' e 'user'")
-            return 1
-
-        # Criar o prompt no formato esperado pelo LangSmith
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", prompt_data["system"]),
-            ("human", prompt_data["user"])
-        ])
-
-        # Push (sem username!)
-        hub.push("bug_to_user_story_v2", prompt)
-
-        print("✅ Prompt enviado com sucesso: bug_to_user_story_v2")
-        return 0
+            raw_prompt_data = yaml.unsafe_load(f)
+        
+        # Reconstrói o objeto ChatPromptTemplate nativo
+        prompt_obj = load(raw_prompt_data)
+        
+        # O nome do repositório deve ser APENAS o nome dele. O SDK injeta o tenant/seu_username automaticamente.
+        repo_name = "bug_to_user_story_v2"
+        print(f"Enviando para o LangSmith Hub como repositório: '{repo_name}'...")
+        
+        # Faz o push usando as credenciais implícitas do ambiente
+        hub.push(repo_name, prompt_obj)
+        
+        print(f"✅ Prompt enviado com sucesso para o seu Hub!")
+        return True
 
     except Exception as e:
-        print(f"❌ Erro ao enviar prompt: {e}")
+        print(f"❌ Erro ao enviar prompt: {e}", file=sys.stderr)
+        return False
+
+def main():
+    """Função principal"""
+    required_vars = ["LANGCHAIN_API_KEY"]
+    if not check_env_vars(required_vars):
+        print("❌ Erro: Variáveis de ambiente obrigatórias não encontradas no arquivo .env.")
         return 1
+        
+    success = push_prompts_to_langsmith()
+    return 0 if success else 1
 
 if __name__ == "__main__":
     sys.exit(main())
