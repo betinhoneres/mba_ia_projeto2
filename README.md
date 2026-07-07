@@ -194,13 +194,23 @@ Dataset utilizado durante a execução:
 prompt-optimization-challenge-resolved-eval
 ```
 
+O screenshot do dataset se encontra em 
+
+```text
+entrega/screenshots/dataset - 15 exemplos.png
+```
+
 # Evidências das Iterações
 
 Durante o desenvolvimento foram realizadas diversas iterações para solucionar problemas de ambiente, integração com o LangSmith, publicação de prompts e melhoria das métricas.
 
 ## Evidência
 
-entrega/screenshots/Iteração 1.png a entrega/screenshots/Iteração 12 - SUCESSO.png
+As evidencias dos testes estão nos screenshots dentro da pasta:
+
+```text
+entrega/screenshots
+```
 
 ---
 
