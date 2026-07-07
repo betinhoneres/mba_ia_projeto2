@@ -186,16 +186,13 @@ STATUS: APROVADO
 
 **https://smith.langchain.com/prompts/bug_to_user_story_v2?organizationId=9831f73f-775f-44dc-9eb5-7715cb661cc8**
 
-Ou utilizar screenshots das execuções conforme solicitado.
-
 ## Dataset de Avaliação
 
 Dataset utilizado durante a execução:
 
 ```text
 prompt-optimization-challenge-resolved-eval
-
----
+```
 
 # Evidências das Iterações
 
