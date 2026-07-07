@@ -188,6 +188,24 @@ STATUS: APROVADO
 
 Ou utilizar screenshots das execuções conforme solicitado.
 
+## Dataset de Avaliação
+
+Dataset utilizado durante a execução:
+
+```text
+prompt-optimization-challenge-resolved-eval
+
+---
+
+# Evidências das Iterações
+
+Durante o desenvolvimento foram realizadas diversas iterações para solucionar problemas de ambiente, integração com o LangSmith, publicação de prompts e melhoria das métricas.
+
+## Evidência
+
+entrega/screenshots/Iteração 1.png a entrega/screenshots/Iteração 12 - SUCESSO.png
+
+---
 
 # Estrutura do Projeto
 
